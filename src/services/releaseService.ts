@@ -1,64 +1,75 @@
-import { IAllowedTemplate } from '../types';
-import { IPartsData } from '../types/template';
-import { parseTemplate } from './templateService';
+import { IReleaseInfo } from '../types/index';
 
 const hasItemChanged = (old: number, cur: number) => old !== -1 && old !== cur;
 
-const getNewPartsData = (partsData: IPartsData) => {
-  const { oldFullYear, oldShortYear, oldMonth, oldDay, oldItr } = partsData;
-  const curDate = new Date();
-  const curFullYear = curDate.getFullYear();
-  const curShortYear = curFullYear % 100;
-  const curMonth = curDate.getMonth() + 1;
-  const curDay = curDate.getDate();
-  let newItr = oldItr + 1;
-  if (
-    hasItemChanged(oldFullYear, curFullYear) ||
-    hasItemChanged(oldShortYear, curShortYear) ||
-    hasItemChanged(oldMonth, curMonth) ||
-    hasItemChanged(oldDay, curDay)
-  ) {
-    newItr = 1;
-  }
-  return {
-    curFullYear,
-    curShortYear,
-    curMonth,
-    curDay,
-    newItr,
-  };
-};
-
-const generateNewTagFromOld = (
-  partsData: IPartsData,
-  tagTemplate: string,
-  tagPrefix: string
-) => {
-  const { curFullYear, curShortYear, curMonth, curDay, newItr } =
-    getNewPartsData(partsData);
-  const newReleaseTag = tagTemplate
-    .replaceAll(IAllowedTemplate.fullYear, curFullYear.toString())
-    .replaceAll(IAllowedTemplate.shortYear, curShortYear.toString())
-    .replaceAll(IAllowedTemplate.month, curMonth.toString())
-    .replaceAll(IAllowedTemplate.day, curDay.toString())
-    .replaceAll(IAllowedTemplate.itr, newItr.toString());
-  return `${tagPrefix}${newReleaseTag}`;
-};
-
-export const getNewReleaseTag = (
-  tagPrefix: string,
-  tagTemplate: string | null | undefined,
-  oldReleaseTag: string | null | undefined
-) => {
-  if (!tagTemplate) {
-    throw new Error('Template not found');
-  }
+const getOldReleaseInfo = (tagPrefix: string, oldReleaseTag: string | null | undefined): IReleaseInfo => {
   if (!oldReleaseTag) {
-    throw new Error('Old release tag not found');
+    return {
+      year: 0,
+      month: 0,
+      day: 0,
+      iter: 0,
+    };
   }
   if (!oldReleaseTag.startsWith(tagPrefix)) {
     throw new Error('Old release tag does not start with the tag prefix');
   }
-  const oldPartsData = parseTemplate(tagTemplate, oldReleaseTag, tagPrefix);
-  return generateNewTagFromOld(oldPartsData, tagTemplate, tagPrefix);
+  const oldReleaseTagDate = oldReleaseTag.slice(tagPrefix.length);
+  const oldReleaseDate: IReleaseInfo = {
+    year: parseInt(oldReleaseTagDate.slice(0, 4)),
+    month: parseInt(oldReleaseTagDate.slice(4, 6)),
+    day: parseInt(oldReleaseTagDate.slice(6, 8)),
+    iter: parseInt(oldReleaseTagDate.slice(8).replace('-', '') || '0')
+  };
+  return oldReleaseDate;
+};
+
+const getNewReleaseInfo = (oldReleaseInfo: IReleaseInfo): IReleaseInfo => {
+  const curDate = new Date();
+  const curYear = curDate.getFullYear();
+  const curMonth = curDate.getMonth() + 1;
+  const curDay = curDate.getDate();
+  let newIter = oldReleaseInfo.iter + 1;
+  if (
+    hasItemChanged(oldReleaseInfo.year, curYear) ||
+    hasItemChanged(oldReleaseInfo.month, curMonth) ||
+    hasItemChanged(oldReleaseInfo.day, curDay)
+  ) {
+    newIter = 1;
+  }
+  return {
+    year: curYear,
+    month: curMonth,
+    day: curDay,
+    iter: newIter,
+  };
+};
+
+const generateNewTag = (
+  tagPrefix: string,
+  newReleaseInfo: IReleaseInfo
+) => {
+  let releaseTag = `${tagPrefix}${newReleaseInfo.year}${newReleaseInfo.month}${newReleaseInfo.day}`;
+  // Append iteration only if it's the second or later one
+  if (newReleaseInfo.iter > 1) {
+    releaseTag = `${releaseTag}-${newReleaseInfo.iter}`
+  }
+  return releaseTag;
+};
+
+export const getNewRelease = (
+  tagPrefix: string,
+  oldReleaseTag: string | null | undefined
+) => {
+  const oldReleaseInfo = getOldReleaseInfo(tagPrefix, oldReleaseTag);
+  const newReleaseInfo = getNewReleaseInfo(oldReleaseInfo);
+  const tag_name = generateNewTag(
+    tagPrefix,
+    newReleaseInfo
+  );
+  let date_info = `${newReleaseInfo.year}-${newReleaseInfo.month}-${newReleaseInfo.day}`;
+  if (newReleaseInfo.iter > 1) {
+    date_info = `${date_info} (${newReleaseInfo.iter})`;
+  }
+  return {tag_name, date_info};
 };
