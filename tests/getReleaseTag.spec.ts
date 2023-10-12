@@ -5,7 +5,6 @@ import {
 } from '../src/services/releaseService';
 import { getTestCase } from './utils/testCase';
 
-
 beforeEach(() => {
   vi.useFakeTimers();
 });
@@ -14,13 +13,6 @@ afterEach(() => {
   vi.useRealTimers();
   vi.resetAllMocks();
 });
-
-const fakeTagInfo: IReleaseInfo = {
-  year: 2023,
-  month: 1,
-  day: 1,
-  iter: 1,
-}
 
 describe('test valid cases without prefix', () => {
   it('should return changed iter for the same date', () => {
