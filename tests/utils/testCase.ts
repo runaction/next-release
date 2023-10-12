@@ -1,29 +1,44 @@
-import { IAllowedTemplate } from '../../src/types';
+import { IReleaseInfo } from '../../src/types/index';
 
-const getReleaseTag = (template: string, date: Date, itr: number) =>
-  template
-    .replaceAll(IAllowedTemplate.fullYear, date.getFullYear().toString())
-    .replaceAll(
-      IAllowedTemplate.shortYear,
-      (date.getFullYear() % 100).toString()
-    )
-    .replaceAll(IAllowedTemplate.month, (date.getMonth() + 1).toString())
-    .replaceAll(IAllowedTemplate.day, date.getDate().toString())
-    .replaceAll(IAllowedTemplate.itr, itr.toString());
+const getReleaseTagInfo = (date: Date, iter: number): IReleaseInfo => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1);
+  const day = date.getDate();
+  return {
+    year,
+    month,
+    day,
+    iter,
+  };
+}
+
+const getReleaseTag = (tagInfo: IReleaseInfo) => {
+  let tagName = `${tagInfo.year}${tagInfo.month}${tagInfo.day}`;
+  if (tagInfo.iter > 1) {
+    tagName = `${tagName}-${tagInfo.iter}`;
+  }
+  return tagName;
+}
 
 export const getTestCase = ({
   oldDate = new Date(),
-  template,
-  oldItr,
-  newItr = 1,
+  newDate = new Date(),
+  oldIter,
+  newIter = 1,
   prefix = '',
 }: {
   oldDate?: Date;
-  template: string;
-  oldItr: number;
-  newItr?: number;
+  newDate?: Date;
+  oldIter: number;
+  newIter?: number;
   prefix?: string;
-}) => ({
-  oldTag: `${prefix}${getReleaseTag(template, oldDate, oldItr)}`,
-  expectedTag: `${prefix}${getReleaseTag(template, new Date(), newItr)}`,
-});
+}) => {
+  const oldTagInfo = getReleaseTagInfo(oldDate, oldIter);
+  const newTagInfo = getReleaseTagInfo(newDate, newIter);
+  return {
+    oldTagInfo,
+    newTagInfo,
+    oldTag: `${prefix}${getReleaseTag(oldTagInfo)}`,
+    newTag: `${prefix}${getReleaseTag(newTagInfo)}`,
+  }
+};
