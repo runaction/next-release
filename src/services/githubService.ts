@@ -7,15 +7,13 @@ export const fetchLatestReleaseTag = async () => {
     const octokit = getOctokit(githubToken);
     const { owner, repo } = context.repo;
     // Fetch only latest tag
-    const response = await octokit.rest.repos.listTags({
+    const latestRelease = await octokit.rest.repos.getLatestRelease({
       owner,
       repo,
-      page: 1,
-      per_page: 1,
     });
-    return response.data?.at(0)?.name;
+    return latestRelease.data?.tag_name;
   } catch (e) {
-    console.error('Error while fetching tags list for this repository', e);
+    console.error('Error while fetching latest release', e);
     throw e;
   }
 };
