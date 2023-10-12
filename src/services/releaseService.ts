@@ -2,7 +2,7 @@ import { IReleaseInfo } from '../types/index';
 
 const hasItemChanged = (old: number, cur: number) => old !== -1 && old !== cur;
 
-const getOldReleaseInfo = (tagPrefix: string, oldReleaseTag: string | null | undefined): IReleaseInfo => {
+export const getOldReleaseInfo = (tagPrefix: string, oldReleaseTag: string | null | undefined): IReleaseInfo => {
   if (!oldReleaseTag) {
     return {
       year: 0,
@@ -45,7 +45,7 @@ const getNewReleaseInfo = (oldReleaseInfo: IReleaseInfo): IReleaseInfo => {
   };
 };
 
-const generateNewTag = (
+export const generateNewTag = (
   tagPrefix: string,
   newReleaseInfo: IReleaseInfo
 ) => {
