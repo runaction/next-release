@@ -2,7 +2,10 @@ import { IReleaseInfo } from '../types/index';
 
 const hasItemChanged = (old: number, cur: number) => old !== -1 && old !== cur;
 
-export const getOldReleaseInfo = (tagPrefix: string, oldReleaseTag: string | null | undefined): IReleaseInfo => {
+export const getOldReleaseInfo = (
+  tagPrefix: string,
+  oldReleaseTag: string | null | undefined
+): IReleaseInfo => {
   if (!oldReleaseTag) {
     return {
       year: 0,
@@ -16,15 +19,17 @@ export const getOldReleaseInfo = (tagPrefix: string, oldReleaseTag: string | nul
   }
   const oldReleaseTagDate = oldReleaseTag.slice(tagPrefix.length);
   const oldReleaseDate: IReleaseInfo = {
-    year: parseInt(oldReleaseTagDate.slice(0, 4)),
-    month: parseInt(oldReleaseTagDate.slice(4, 6)),
-    day: parseInt(oldReleaseTagDate.slice(6, 8)),
-    iter: parseInt(oldReleaseTagDate.slice(8).replace('-', '') || '0')
+    year: parseInt(oldReleaseTagDate.slice(0, 4), 10),
+    month: parseInt(oldReleaseTagDate.slice(4, 6), 10),
+    day: parseInt(oldReleaseTagDate.slice(6, 8), 10),
+    iter: parseInt(oldReleaseTagDate.slice(8).replace('-', '') || '0', 10),
   };
   return oldReleaseDate;
 };
 
-const getNewReleaseInfo = (oldReleaseInfo: IReleaseInfo): IReleaseInfo => {
+export const getNewReleaseInfo = (
+  oldReleaseInfo: IReleaseInfo
+): IReleaseInfo => {
   const curDate = new Date();
   const curYear = curDate.getFullYear();
   const curMonth = curDate.getMonth() + 1;
@@ -52,7 +57,7 @@ export const generateNewTag = (
   let releaseTag = `${tagPrefix}${newReleaseInfo.year}${newReleaseInfo.month}${newReleaseInfo.day}`;
   // Append iteration only if it's the second or later one
   if (newReleaseInfo.iter > 1) {
-    releaseTag = `${releaseTag}-${newReleaseInfo.iter}`
+    releaseTag = `${releaseTag}-${newReleaseInfo.iter}`;
   }
   return releaseTag;
 };
@@ -60,16 +65,13 @@ export const generateNewTag = (
 export const getNewRelease = (
   tagPrefix: string,
   oldReleaseTag: string | null | undefined
-) => {
+): { tagName: string; dateInfo: string } => {
   const oldReleaseInfo = getOldReleaseInfo(tagPrefix, oldReleaseTag);
   const newReleaseInfo = getNewReleaseInfo(oldReleaseInfo);
-  const tag_name = generateNewTag(
-    tagPrefix,
-    newReleaseInfo
-  );
-  let date_info = `${newReleaseInfo.year}-${newReleaseInfo.month}-${newReleaseInfo.day}`;
+  const tagName = generateNewTag(tagPrefix, newReleaseInfo);
+  let dateInfo = `${newReleaseInfo.year}-${newReleaseInfo.month}-${newReleaseInfo.day}`;
   if (newReleaseInfo.iter > 1) {
-    date_info = `${date_info} (${newReleaseInfo.iter})`;
+    dateInfo = `${dateInfo} (${newReleaseInfo.iter})`;
   }
-  return {tag_name, date_info};
+  return { tagName, dateInfo };
 };
