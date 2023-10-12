@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { generateNewTag, getOldReleaseInfo } from '../src/services/releaseService';
+import {
+  getNewRelease,
+  getOldReleaseInfo,
+} from '../src/services/releaseService';
 import { getTestCase } from './utils/testCase';
-import { IReleaseInfo } from '../src/types';
+
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -20,97 +23,95 @@ const fakeTagInfo: IReleaseInfo = {
 }
 
 describe('test valid cases without prefix', () => {
-  it('should return changed iter for same date', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldIter: 4,
-        newIter: 5,
-      });
-      const actualTag = generateNewTag('', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+  it('should return changed iter for the same date', () => {
+    const { oldTag, newTag } = getTestCase({
+      oldIter: 4,
+      newIter: 5,
+    });
+    const newRelease = getNewRelease('', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
   it('should reset iter for changed day', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldDate: new Date('2023-01-01'),
-        newDate: new Date('2023-01-02'),
-        oldIter: 4,
-        newIter: 1,
-      });
-      const actualTag = generateNewTag('', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+    vi.setSystemTime(new Date('2023-01-02'));
+    const { oldTag, newTag } = getTestCase({
+      oldDate: new Date('2023-01-01'),
+      newDate: new Date('2023-01-02'),
+      oldIter: 4,
+      newIter: 1,
+    });
+    const newRelease = getNewRelease('', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
   it('should reset iter for changed month', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldDate: new Date('2023-01-01'),
-        newDate: new Date('2023-02-01'),
-        oldIter: 4,
-        newIter: 1,
-      });
-      const actualTag = generateNewTag('', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+    vi.setSystemTime(new Date('2023-02-01'));
+    const { oldTag, newTag } = getTestCase({
+      oldDate: new Date('2023-01-01'),
+      newDate: new Date('2023-02-01'),
+      oldIter: 4,
+      newIter: 1,
+    });
+    const newRelease = getNewRelease('', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
   it('should reset iter for changed year', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldDate: new Date('2023-01-01'),
-        newDate: new Date('2024-01-01'),
-        oldIter: 4,
-        newIter: 1,
-      });
-      const actualTag = generateNewTag('', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+    vi.setSystemTime(new Date('2024-01-01'));
+    const { oldTag, newTag } = getTestCase({
+      oldDate: new Date('2023-01-01'),
+      newDate: new Date('2024-01-01'),
+      oldIter: 4,
+      newIter: 1,
+    });
+    const newRelease = getNewRelease('', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
 });
 
 describe('test valid cases with prefix', () => {
-  it('should return changed iter for same date', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldIter: 4,
-        newIter: 5,
-        prefix: 'v',
-      });
-      const actualTag = generateNewTag('v', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+  it('should return changed iter for the same date', () => {
+    const { oldTag, newTag } = getTestCase({
+      oldIter: 4,
+      newIter: 5,
+      prefix: 'v',
+    });
+    const newRelease = getNewRelease('v', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
   it('should reset iter for changed day', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldDate: new Date('2023-01-01'),
-        newDate: new Date('2023-01-02'),
-        oldIter: 4,
-        newIter: 1,
-        prefix: 'v',
-      });
-      const actualTag = generateNewTag('v', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+    vi.setSystemTime(new Date('2023-01-02'));
+    const { oldTag, newTag } = getTestCase({
+      oldDate: new Date('2023-01-01'),
+      newDate: new Date('2023-01-02'),
+      oldIter: 4,
+      newIter: 1,
+      prefix: 'v',
+    });
+    const newRelease = getNewRelease('v', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
   it('should reset iter for changed month', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldDate: new Date('2023-01-01'),
-        newDate: new Date('2023-02-01'),
-        oldIter: 4,
-        newIter: 1,
-        prefix: 'v',
-      });
-      const actualTag = generateNewTag('v', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+    vi.setSystemTime(new Date('2023-02-01'));
+    const { oldTag, newTag } = getTestCase({
+      oldDate: new Date('2023-01-01'),
+      newDate: new Date('2023-02-01'),
+      oldIter: 4,
+      newIter: 1,
+      prefix: 'v',
+    });
+    const newRelease = getNewRelease('v', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
   it('should reset iter for changed year', () => {
-      const { oldTagInfo, newTag } = getTestCase({
-        oldDate: new Date('2023-01-01'),
-        newDate: new Date('2024-01-01'),
-        oldIter: 4,
-        newIter: 1,
-        prefix: 'v',
-      });
-      const actualTag = generateNewTag('v', oldTagInfo);
-      expect(actualTag).toBe(newTag);
-    }
-  );
+    vi.setSystemTime(new Date('2024-01-01'));
+    const { oldTag, newTag } = getTestCase({
+      oldDate: new Date('2023-01-01'),
+      newDate: new Date('2024-01-01'),
+      oldIter: 4,
+      newIter: 1,
+      prefix: 'v',
+    });
+    const newRelease = getNewRelease('v', oldTag);
+    expect(newRelease.tagName).toBe(newTag);
+  });
 });
 
 describe('test invalid cases with a missing prefix', () => {

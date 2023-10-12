@@ -2,7 +2,7 @@ import { IReleaseInfo } from '../../src/types/index';
 
 const getReleaseTagInfo = (date: Date, iter: number): IReleaseInfo => {
   const year = date.getFullYear();
-  const month = (date.getMonth() + 1);
+  const month = date.getMonth() + 1;
   const day = date.getDate();
   return {
     year,
@@ -10,7 +10,7 @@ const getReleaseTagInfo = (date: Date, iter: number): IReleaseInfo => {
     day,
     iter,
   };
-}
+};
 
 const getReleaseTag = (tagInfo: IReleaseInfo) => {
   let tagName = `${tagInfo.year}${tagInfo.month}${tagInfo.day}`;
@@ -18,7 +18,7 @@ const getReleaseTag = (tagInfo: IReleaseInfo) => {
     tagName = `${tagName}-${tagInfo.iter}`;
   }
   return tagName;
-}
+};
 
 export const getTestCase = ({
   oldDate = new Date(),
@@ -40,5 +40,5 @@ export const getTestCase = ({
     newTagInfo,
     oldTag: `${prefix}${getReleaseTag(oldTagInfo)}`,
     newTag: `${prefix}${getReleaseTag(newTagInfo)}`,
-  }
+  };
 };

@@ -3,4 +3,4 @@ export interface IReleaseInfo {
   month: number;
   day: number;
   iter: number;
-};
+}
