@@ -22,7 +22,7 @@ export const getOldReleaseInfo = (
     year: parseInt(oldReleaseTagDate.slice(0, 4), 10),
     month: parseInt(oldReleaseTagDate.slice(4, 6), 10),
     day: parseInt(oldReleaseTagDate.slice(6, 8), 10),
-    iter: parseInt(oldReleaseTagDate.slice(8).replace('-', '') || '0', 10),
+    iter: parseInt(oldReleaseTagDate.slice(8).replace('-', '') || '1', 10),
   };
   return oldReleaseDate;
 };
