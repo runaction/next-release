@@ -1,8 +1,8 @@
-name: 'Auto Generate Next Release Tag'
+name: 'Generate Next Release info'
 description: 'Automatically generate next release tag incrementally with year, month and iteration based on previous release tag.'
-author: 'amitsingh-007'
+author: '1st'
 branding:
-  color: 'red'
+  color: 'green'
   icon: 'tag'
 
 inputs:
@@ -11,9 +11,6 @@ inputs:
     required: true
   tag_prefix:
     description: 'Prefix added to the generated release tag'
-    required: true
-  tag_template:
-    description: 'Template format based in which release tag is generated'
     required: true
 
 runs:
