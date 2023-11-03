@@ -1,7 +1,7 @@
 import { IReleaseInfo } from '../types/index';
 
 const addZero = (val: number): string =>
-  val < 10 ? '0' + val : val.toString();
+  val < 10 ? `0${val}` : val.toString();
 const hasItemChanged = (old: string, cur: string) => old !== cur;
 
 export const getOldReleaseInfo = (
