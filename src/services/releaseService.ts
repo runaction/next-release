@@ -1,6 +1,8 @@
 import { IReleaseInfo } from '../types/index';
 
-const hasItemChanged = (old: number, cur: number) => old !== -1 && old !== cur;
+const addZero = (val: number): string =>
+  val < 10 ? `0${val}` : val.toString();
+const hasItemChanged = (old: string, cur: string) => old !== cur;
 
 export const getOldReleaseInfo = (
   tagPrefix: string,
@@ -8,9 +10,9 @@ export const getOldReleaseInfo = (
 ): IReleaseInfo => {
   if (!oldReleaseTag) {
     return {
-      year: 0,
-      month: 0,
-      day: 0,
+      year: '0',
+      month: '0',
+      day: '0',
       iter: 0,
     };
   }
@@ -19,9 +21,9 @@ export const getOldReleaseInfo = (
   }
   const oldReleaseTagDate = oldReleaseTag.slice(tagPrefix.length);
   const oldReleaseDate: IReleaseInfo = {
-    year: parseInt(oldReleaseTagDate.slice(0, 4), 10),
-    month: parseInt(oldReleaseTagDate.slice(4, 6), 10),
-    day: parseInt(oldReleaseTagDate.slice(6, 8), 10),
+    year: oldReleaseTagDate.slice(0, 4),
+    month: oldReleaseTagDate.slice(4, 6),
+    day: oldReleaseTagDate.slice(6, 8),
     iter: parseInt(oldReleaseTagDate.slice(8).replace('-', '') || '1', 10),
   };
   return oldReleaseDate;
@@ -31,9 +33,9 @@ export const getNewReleaseInfo = (
   oldReleaseInfo: IReleaseInfo
 ): IReleaseInfo => {
   const curDate = new Date();
-  const curYear = curDate.getFullYear();
-  const curMonth = curDate.getMonth() + 1;
-  const curDay = curDate.getDate();
+  const curYear = curDate.getFullYear().toString();
+  const curMonth = addZero(curDate.getMonth() + 1);
+  const curDay = addZero(curDate.getDate());
   let newIter = oldReleaseInfo.iter + 1;
   if (
     hasItemChanged(oldReleaseInfo.year, curYear) ||
@@ -53,7 +55,7 @@ export const getNewReleaseInfo = (
 export const generateNewTag = (
   tagPrefix: string,
   newReleaseInfo: IReleaseInfo
-) => {
+): string => {
   let releaseTag = `${tagPrefix}${newReleaseInfo.year}${newReleaseInfo.month}${newReleaseInfo.day}`;
   // Append iteration only if it's the second or later one
   if (newReleaseInfo.iter > 1) {
