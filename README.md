@@ -40,3 +40,7 @@ jobs:
             --title "${{ env.RELEASE_TITLE }}" \
             --latest
 ```
+
+## Ho to build
+
+Run `npm run dist` (and `npm run lint-and-fix` if needed) to build source code.
