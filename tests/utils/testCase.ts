@@ -1,9 +1,12 @@
 import { IReleaseInfo } from '../../src/types/index';
 
+const addZero = (val: number): string =>
+  val < 10 ? '0' + val : val.toString();
+
 const getReleaseTagInfo = (date: Date, iter: number): IReleaseInfo => {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const year = date.getFullYear().toString();
+  const month = addZero(date.getMonth() + 1);
+  const day = addZero(date.getDate());
   return {
     year,
     month,
