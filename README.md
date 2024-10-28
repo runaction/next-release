@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Generate release tag
         id: next_release
-        uses: runaction/next-release@v1.0.1
+        uses: runaction/next-release@v1.0.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag_prefix: 'v'
