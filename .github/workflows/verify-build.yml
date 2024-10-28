@@ -36,10 +36,9 @@ jobs:
       - name: Compare the expected and actual dist/ directories
         id: diff
         run: |
-          if [ "$(git status --porcelain dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build. See status below:"
-            git status --short dist/
-            git diff dist/
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build.  See status below:"
+            git diff
             exit 1
           fi
 
