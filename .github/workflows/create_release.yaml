@@ -13,7 +13,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Generate release tag
         id: next_release
         uses: runaction/next-release@v1.0.1
